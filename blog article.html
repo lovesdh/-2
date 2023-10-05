@@ -50,12 +50,13 @@
     </div>
 
     <script>
-        var posts = [];
+        var posts = [];		//数组来存放每一篇笔记
 
         function renderPosts() {
-            var postsContainer = document.getElementById('posts');
-            postsContainer.innerHTML = "";
+            var postsContainer = document.getElementById('posts');		//获取posts
+            postsContainer.innerHTML = "";		// 清空笔记列表
 
+			// 渲染笔记列表
             posts.forEach(function(post) {
                 var postElement = document.createElement('div');
                 postElement.className = 'post';
@@ -92,10 +93,12 @@
             });
         }
 
+		//定义Post函数
         function addPost() {
             var title = prompt('请输入标题');
             var content = prompt('请输入笔记内容');
 
+			//post内容
             var post = {
                 id: Date.now(),
                 title: title,
@@ -106,10 +109,11 @@
 				timestamp: Date.now()
             };
 
-            posts.push(post);
-            renderPosts();
+            posts.push(post);		// 将post添加到数组中
+            renderPosts();		//重新渲染
         }
 
+		//定义编辑函数
         function editPost(id) {
             var post = posts.find(function(post) {
                 return post.id === id;
@@ -119,14 +123,16 @@
                 var newTitle = prompt('请输入新的标题', post.title);
                 var newContent = prompt('请输入新的笔记', post.content);
 
+				//更新post属性
                 post.title = newTitle;
                 post.content = newContent;
                 post.editTime = Date.now();
 
-                renderPosts();
+                renderPosts();		//重新渲染
             }
         }
 
+		//定义删除
         function deletePost(id) {
             var index = posts.findIndex(function(post) {
                 return post.id === id;
@@ -138,6 +144,7 @@
             }
         }
 
+		//定义点赞
         function likePost(id) {
             var post = posts.find(function(post) {
                 return post.id === id;
@@ -149,13 +156,14 @@
             }
         }
 
+		//使用post函数
         var addBtn = document.getElementById('add-btn');
         addBtn.addEventListener('click', function() {
             addPost();
         });
-
         renderPosts();
 
+		//按时间排序
 		var sortTimeBtn = document.getElementById('sort-time-btn');
 			sortTimeBtn.addEventListener('click', function(){
    			 	posts.sort(function(a, b) {
@@ -164,6 +172,7 @@
    			 	renderPosts();
 			});
 
+		//按点赞排序
 		var sortLikesBtn = document.getElementById('sort-likes-btn');
 			sortLikesBtn.addEventListener('click', function(){
 				posts.sort(function(a, b) {
