@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title></title>    
+    <style>
+		html,body{
+			height:90%;
+			margin:0;
+			padding:0;
+			}
+		body{
+				background: blue url(img/天空，云彩，阳光.jpg) center center;
+				background-size: cover;
+			}	
+         .box-container {
+            margin: 0 auto;
+            width: 694px;
+            height: 800px;
+            background-color: #f2f2f2;
+            border: 1px solid pink;
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+			opacity:0.85;
+        }
+
+        .box-content {
+            font-size: 20px;
+            color: #333;
+            text-align: center;
+            overflow: auto;
+            padding: 10px 150px;
+            box-sizing: border-box;
+            word-wrap: break-word;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="box-container">
+        <div class="box-content">
+			<button id="sort-time-btn" >按时间排序</button>
+            <button id="sort-likes-btn">按点赞数排序</button>
+            <div id="posts"></div>
+            <button id="add-btn">添加笔记</button>
+        </div>
+    </div>
+
+    <script>
+        var posts = [];
+
+        function renderPosts() {
+            var postsContainer = document.getElementById('posts');
+            postsContainer.innerHTML = "";
+
+            posts.forEach(function(post) {
+                var postElement = document.createElement('div');
+                postElement.className = 'post';
+                postElement.innerHTML = `
+                    <h3>${post.title}</h3>
+                    <p>${post.content}</p>
+                    <p>创建时间:${new Date(post.time).toLocaleString()}</p>
+                    <p>编辑时间：${new Date(post.editTime).toLocaleString()}</p>
+                    <p>点赞数量：${post.likes}</p>
+                    <div class="post-footer">
+                        <button class="btn-like" data-id="${post.id}">赞</button>
+                        <button class="btn-delete" data-id="${post.id}">删除</button>
+                        <button class="btn-edit" data-id="${post.id}">编辑</button>
+                    </div>
+                    <div class="comments"></div>`;
+
+                postsContainer.appendChild(postElement);
+
+                var likeBtn = postElement.querySelector('.btn-like');
+                var deleteBtn = postElement.querySelector('.btn-delete');
+                var editBtn = postElement.querySelector('.btn-edit');
+
+                likeBtn.addEventListener('click', function() {
+                    likePost(post.id);
+                });
+
+                deleteBtn.addEventListener('click', function() {
+                    deletePost(post.id);
+                });
+
+                editBtn.addEventListener('click', function() {
+                    editPost(post.id);
+                });
+            });
+        }
+
+        function addPost() {
+            var title = prompt('请输入标题');
+            var content = prompt('请输入笔记内容');
+
+            var post = {
+                id: Date.now(),
+                title: title,
+                content: content,
+                time: Date.now(),
+                editTime: null,
+                likes: 0,
+				timestamp: Date.now()
+            };
+
+            posts.push(post);
+            renderPosts();
+        }
+
+        function editPost(id) {
+            var post = posts.find(function(post) {
+                return post.id === id;
+            });
+
+            if (post) {
+                var newTitle = prompt('请输入新的标题', post.title);
+                var newContent = prompt('请输入新的笔记', post.content);
+
+                post.title = newTitle;
+                post.content = newContent;
+                post.editTime = Date.now();
+
+                renderPosts();
+            }
+        }
+
+        function deletePost(id) {
+            var index = posts.findIndex(function(post) {
+                return post.id === id;
+            });
+
+            if (index !== -1) {
+                posts.splice(index, 1);
+                renderPosts();
+            }
+        }
+
+        function likePost(id) {
+            var post = posts.find(function(post) {
+                return post.id === id;
+            });
+
+            if (post) {
+                post.likes++;
+                renderPosts();
+            }
+        }
+
+        var addBtn = document.getElementById('add-btn');
+        addBtn.addEventListener('click', function() {
+            addPost();
+        });
+
+        renderPosts();
+
+		var sortTimeBtn = document.getElementById('sort-time-btn');
+			sortTimeBtn.addEventListener('click', function(){
+   			 	posts.sort(function(a, b) {
+       		 		return b.timestamp - a.timestamp;
+    		});
+   			 	renderPosts();
+			});
+
+		var sortLikesBtn = document.getElementById('sort-likes-btn');
+			sortLikesBtn.addEventListener('click', function(){
+				posts.sort(function(a, b) {
+					return b.likes - a.likes;
+				});
+				renderPosts();
+			});
+    </script>
+</body>
+</html>
